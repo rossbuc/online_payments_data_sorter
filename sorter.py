@@ -15,9 +15,17 @@ sanitised_rows = []
 for entry in rows:
     full_name = entry[0].split("\xa0")
     full_name.reverse()
+    for i, name in enumerate(full_name): 
+        for character in name:
+            if not character.isalpha():
+                print("Removing this character,", character, "from this name,", name)
+                name = name.replace(character, '')
+        print(name)
+        full_name[i] = name
     by_last_name = "\xa0".join(full_name)
     entry[0] = by_last_name.capitalize()
     sanitised_rows.append(entry)
+
 
     
 
