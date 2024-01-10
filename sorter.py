@@ -27,14 +27,30 @@ print(len(rows))
 new_data = []
 
 for entry in sorted_data:
-    entry_object = {header[0]: entry[0], header[1]: entry[1], header[2]: entry[2], header[3]: entry[3], header[4]: entry[4], header[5]: entry[5], header[6]: entry[6], header[7]: entry[7], header[8]: entry[8], header[9]: entry[9], header[10]: entry[10], header[11]: entry[11]}
-    print(entry_object)
+    full_name = entry[0].split("\xa0")
+    entry_object = {
+        "Group Leader Last Name": full_name[0].capitalize(),
+        "Group Leader First Name": full_name[1].capitalize(),
+        header[1]: entry[1],
+        header[2]: entry[2], 
+        header[3]: entry[3], 
+        header[4]: entry[4], 
+        header[5]: entry[5], 
+        header[6]: entry[6], 
+        header[7]: entry[7], 
+        header[8]: entry[8], 
+        header[9]: entry[9], 
+        header[10]: entry[10], 
+        header[11]: entry[11]
+        }
     new_data.append(entry_object)
 
 print(len(header))
 
 with open('Sanitised Payments Data.csv', 'w', newline='') as csvfile:
-    writer = csv.DictWriter(csvfile, fieldnames=header)
+    fieldnames = ["Group Leader Last Name", "Group Leader First Name"] + header[1:]
+    print(fieldnames)
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
     writer.writeheader()
     writer.writerows(new_data)
 
