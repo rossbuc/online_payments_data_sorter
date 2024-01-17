@@ -3,3 +3,4 @@ Sanitised Payments Data.csv
 .env
 SNOWBERY DOT COM PAYMENTS .csv
 Dot Com Sanitised Payments Data.csv
+__pycache__
