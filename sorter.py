@@ -2,6 +2,12 @@ import csv
 from decouple import config
 
 API_PATH_PAYMENTS_FIRST_NAME = config('PATH_ONLINE_PAYMENTS')
+API_PATH_PAYMENTS_DOT_COM = config('PATH_DOT_COM_PAYMENTS')
+
+
+
+# ------ Data manipulation for the online payments -------
+
 rows = []
 
 with open(API_PATH_PAYMENTS_FIRST_NAME, "r") as file:
@@ -62,3 +68,71 @@ with open('Sanitised Payments Data.csv', 'w', newline='') as csvfile:
     writer.writeheader()
     writer.writerows(new_data)
 
+
+
+# ------ Data manipulation for the Dot Com payments spreadsheet ------
+
+rows_dot_com = []
+
+with open(API_PATH_PAYMENTS_DOT_COM, "r") as file:
+    csvreader = csv.reader(file)
+    header = next(csvreader)
+    for row in csvreader:
+        rows_dot_com.append(row)
+
+del rows_dot_com[:5]
+
+for i, row in enumerate(rows_dot_com):
+    del row[8]
+    if row[0] == "Total remise:":
+        print("I've found the row that says total remise, heres the proof, ", row, "and its at index, ", i)
+        del rows_dot_com[i:]
+
+
+sanitised_rows_dot_com = []
+
+for entry in rows_dot_com:
+    full_name = entry[7].split(" ")
+    print(full_name)
+    for i, name in enumerate(full_name): 
+        for character in name:
+            if not character.isalpha():
+                print("Removing this character,", character, "from this name,", name)
+                name = name.replace(character, '')
+        print(name)
+        full_name[i] = name
+    by_last_name = "\xa0".join(full_name)
+    entry[7] = by_last_name.capitalize()
+    entry.insert(0, entry[7])
+    del entry[8]
+    sanitised_rows_dot_com.append(entry)
+
+sorted_data_dot_com = sorted(sanitised_rows_dot_com)
+
+print("this is the sorted data hopefully by alphabetical for dot com")
+print(sorted_data_dot_com)
+
+new_data_dot_com = []
+
+for entry in sorted_data_dot_com:
+    full_name = entry[0].split("\xa0")
+    entry_object_dot_com = {
+        "Group Leader Last Name": full_name[0].capitalize(),
+        "Group Leader First Name": full_name[1].capitalize(),
+        "N°": entry[1],
+        "Date/Heure": entry[2],
+        "Amount (Montant)": entry[3],
+        "Devise": entry[4],
+        "Paiement": entry[5],
+        "Magasin": entry[6],
+        "Client": entry[7]
+    }
+    new_data_dot_com.append(entry_object_dot_com)
+
+
+with open('Dot Com Sanitised Payments Data.csv', 'w', newline='') as csvfile:
+    fieldnames = ["Group Leader Last Name", "Group Leader First Name", "N°", "Date/Heure", "Amount (Montant)", "Devise", "Paiement", "Magasin", "Client"]
+    print(fieldnames)
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    writer.writeheader()
+    writer.writerows(new_data_dot_com)
