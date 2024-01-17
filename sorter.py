@@ -1,5 +1,6 @@
 import csv
 from decouple import config
+from difference_finder import difference_finder
 
 API_PATH_PAYMENTS_FIRST_NAME = config('PATH_ONLINE_PAYMENTS')
 API_PATH_PAYMENTS_DOT_COM = config('PATH_DOT_COM_PAYMENTS')
@@ -39,6 +40,7 @@ sorted_data = sorted(sanitised_rows)
 print(len(rows))
 
 new_data = []
+new_data_comparison = []
 
 for entry in sorted_data:
     full_name = entry[0].split("\xa0")
@@ -58,6 +60,10 @@ for entry in sorted_data:
         header[11]: entry[11]
         }
     new_data.append(entry_object)
+    del entry[0]
+    entry.insert(0, full_name[1])
+    entry.insert(0, full_name[0])
+    new_data_comparison.append(entry)
 
 print(len(header))
 
@@ -115,6 +121,7 @@ print("this is the sorted data hopefully by alphabetical for dot com")
 print(sorted_data_dot_com)
 
 new_data_dot_com = []
+new_data_dot_com_comparison = []
 
 for entry in sorted_data_dot_com:
     full_name = entry[0].split("\xa0")
@@ -130,6 +137,10 @@ for entry in sorted_data_dot_com:
         "Client": entry[7]
     }
     new_data_dot_com.append(entry_object_dot_com)
+    del entry[0]
+    entry.insert(0, full_name[1])
+    entry.insert(0, full_name[0])
+    new_data_dot_com_comparison.append(entry)
 
 
 with open('Dot Com Sanitised Payments Data.csv', 'w', newline='') as csvfile:
@@ -138,3 +149,5 @@ with open('Dot Com Sanitised Payments Data.csv', 'w', newline='') as csvfile:
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
     writer.writeheader()
     writer.writerows(new_data_dot_com)
+
+difference_finder(new_data_comparison, new_data_dot_com_comparison)
