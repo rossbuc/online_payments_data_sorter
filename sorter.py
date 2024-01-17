@@ -99,9 +99,11 @@ for entry in rows_dot_com:
             if not character.isalpha():
                 print("Removing this character,", character, "from this name,", name)
                 name = name.replace(character, '')
-        print(name)
         full_name[i] = name
+        if len(name) == 0:
+            full_name.remove(name)
     by_last_name = "\xa0".join(full_name)
+    print("this is the persons full name, ", full_name)
     entry[7] = by_last_name.capitalize()
     entry.insert(0, entry[7])
     del entry[8]
