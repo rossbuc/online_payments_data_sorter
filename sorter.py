@@ -31,6 +31,12 @@ for entry in rows:
         full_name[i] = name
     by_last_name = "\xa0".join(full_name)
     entry[0] = by_last_name.capitalize()
+    if "," in entry[3]: 
+        formatted_number = float(entry[3].replace(',', ''))
+        result = '{:.2f}'.format(formatted_number/100)
+        entry[3] = result
+
+    print("this is the new entry 3, ", entry[3])
     sanitised_rows.append(entry)
 
 
